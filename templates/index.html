@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leitor de PDF SISP / REDS</title>
+    <style>
+        body {
+            background-color: #0f0c1b;
+            color: #e0d6ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 30px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #a855f7;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+        }
+        .upload-card {
+            background-color: #1a162b;
+            border: 2px dashed #7e22ce;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .file-label {
+            background-color: #6b21a8;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            display: inline-block;
+            transition: 0.3s;
+        }
+        .file-label:hover {
+            background-color: #7e22ce;
+        }
+        .btn-submit {
+            background-color: #a855f7;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 15px;
+            transition: 0.3s;
+        }
+        .btn-submit:hover {
+            background-color: #c084fc;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #1a162b;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        th {
+            background-color: #581c87;
+            color: #f3e8ff;
+            padding: 14px;
+            text-align: left;
+            font-size: 14px;
+        }
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #2e2640;
+            font-size: 13px;
+        }
+        tr:hover {
+            background-color: #261e38;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Processador de Relatórios SISP / REDS</h1>
+        
+        <div class="upload-card">
+            <form action="/processar" method="POST" enctype="multipart/form-data">
+                <label for="pdf_file" class="file-label">📁 Selecionar PDF</label>
+                <input type="file" name="pdf_file" id="pdf_file" accept=".pdf" required onchange="document.getElementById('file-name').innerText = this.files[0].name">
+                <span id="file-name" style="margin-left: 10px; color: #a855f7;">Nenhum arquivo selecionado</span>
+                <br><br>
+                <button type="submit" class="btn-submit">⚡ Processar PDF com 1 Clique</button>
+            </form>
+        </div>
+
+        <h2>Registros Processados</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th>Nº Chamada</th>
+                    <th>Nº REDS</th>
+                    <th>Nat (6)</th>
+                    <th>Recurso</th>
+                    <th>Responsável</th>
+                    <th>Nat (Restante)</th>
+                    <th>Localização</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in dados %}
+                <tr>
+                    <td>{{ item.data }}</td>
+                    <td>{{ item.hora }}</td>
+                    <td>{{ item.n_chamada }}</td>
+                    <td>{{ item.n_reds }}</td>
+                    <td>{{ item.nat_6 }}</td>
+                    <td>{{ item.recurso }}</td>
+                    <td>{{ item.resp_registro }}</td>
+                    <td>{{ item.nat_resto }}</td>
+                    <td>{{ item.localizacao }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="9" style="text-align: center; color: #9ca3af;">Nenhum registro encontrado até o momento.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
