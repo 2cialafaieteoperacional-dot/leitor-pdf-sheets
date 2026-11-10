@@ -6,8 +6,8 @@
     <title>Leitor de PDF SISP / REDS</title>
     <style>
         body {
-            background-color: #0f0c1b;
-            color: #e0d6ff;
+            background-color: #000000; /* Preto absoluto */
+            color: #d1d5db; /* Cinza claro para leitura */
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 30px;
@@ -17,72 +17,112 @@
             margin: 0 auto;
         }
         h1 {
-            color: #a855f7;
+            color: #9333ea; /* Único tom de roxo escuro */
             text-align: center;
             margin-bottom: 30px;
-            text-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+            letter-spacing: 1px;
+        }
+        .alert-container {
+            margin-bottom: 25px;
+        }
+        .alert {
+            padding: 15px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            text-align: center;
+            border: 1px solid #9333ea;
+            background-color: #000000;
+            color: #d1d5db;
+            transition: opacity 0.5s ease;
+        }
+        .alert.success {
+            border-color: #10b981; /* Verde suave apenas para confirmação de sucesso */
+            color: #10b981;
+        }
+        .alert.error {
+            border-color: #ef4444; /* Vermelho suave apenas para erros */
+            color: #ef4444;
         }
         .upload-card {
-            background-color: #1a162b;
-            border: 2px dashed #7e22ce;
-            border-radius: 12px;
-            padding: 30px;
+            background-color: #0a0a0a; /* Preto levemente texturizado */
+            border: 1px solid #9333ea; /* Único tom de roxo escuro */
+            border-radius: 8px;
+            padding: 35px;
             text-align: center;
             margin-bottom: 40px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .form-inline {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
         }
         input[type="file"] {
             display: none;
         }
         .file-label {
-            background-color: #6b21a8;
-            color: white;
+            background-color: #000000;
+            color: #9333ea; /* Único tom de roxo escuro */
             padding: 12px 24px;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            display: inline-block;
-            transition: 0.3s;
+            border: 1px solid #9333ea;
+            transition: 0.2s;
         }
         .file-label:hover {
-            background-color: #7e22ce;
+            background-color: #9333ea;
+            color: #000000;
+        }
+        #file-name {
+            color: #9333ea;
+            font-size: 14px;
         }
         .btn-submit {
-            background-color: #a855f7;
-            color: white;
+            background-color: #9333ea; /* Único tom de roxo escuro */
+            color: #000000;
             border: none;
             padding: 12px 28px;
-            border-radius: 8px;
+            border-radius: 6px;
             font-weight: bold;
             cursor: pointer;
-            margin-left: 15px;
-            transition: 0.3s;
+            border: 1px solid #9333ea;
+            transition: 0.2s;
         }
         .btn-submit:hover {
-            background-color: #c084fc;
+            background-color: #7e22ce;
+            color: #ffffff;
+        }
+        h2 {
+            color: #9333ea;
+            border-bottom: 1px solid #9333ea;
+            padding-bottom: 10px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            background-color: #1a162b;
+            background-color: #0a0a0a;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 1px solid #9333ea;
         }
         th {
-            background-color: #581c87;
-            color: #f3e8ff;
+            background-color: #000000;
+            color: #9333ea;
             padding: 14px;
             text-align: left;
             font-size: 14px;
+            border-bottom: 1px solid #9333ea;
         }
         td {
             padding: 12px 14px;
-            border-bottom: 1px solid #2e2640;
+            border-bottom: 1px solid #171717;
             font-size: 13px;
+            color: #d1d5db;
         }
         tr:hover {
-            background-color: #261e38;
+            background-color: #121212;
         }
     </style>
 </head>
@@ -90,13 +130,22 @@
     <div class="container">
         <h1>Processador de Relatórios SISP / REDS</h1>
         
+        <div class="alert-container" id="alert-box">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
         <div class="upload-card">
-            <form action="/processar" method="POST" enctype="multipart/form-data">
+            <form action="/processar" method="POST" enctype="multipart/form-data" class="form-inline">
                 <label for="pdf_file" class="file-label">📁 Selecionar PDF</label>
                 <input type="file" name="pdf_file" id="pdf_file" accept=".pdf" required onchange="document.getElementById('file-name').innerText = this.files[0].name">
-                <span id="file-name" style="margin-left: 10px; color: #a855f7;">Nenhum arquivo selecionado</span>
-                <br><br>
-                <button type="submit" class="btn-submit">⚡ Processar PDF com 1 Clique</button>
+                <span id="file-name">Nenhum arquivo selecionado</span>
+                <button type="submit" class="btn-submit">⚡ Processar e Enviar</button>
             </form>
         </div>
 
@@ -130,11 +179,24 @@
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="9" style="text-align: center; color: #9ca3af;">Nenhum registro encontrado até o momento.</td>
+                    <td colspan="9" style="text-align: center; color: #52525b;">Nenhum registro encontrado até o momento.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+
+    <script>
+        setTimeout(function() {
+            var alertBox = document.getElementById('alert-box');
+            if (alertBox) {
+                alertBox.style.opacity = '0';
+                setTimeout(function() {
+                    alertBox.innerHTML = '';
+                    alertBox.style.opacity = '1';
+                }, 500);
+            }
+        }, 4000);
+    </script>
 </body>
 </html>
